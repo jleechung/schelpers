@@ -12,7 +12,7 @@ see <- function(x) {
 #' @return unique length
 #' @export
 ulen <- function(x) {
-    unique(length(x))
+    length(unique(x))
 }
 
 #' Kelly palette
