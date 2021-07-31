@@ -209,9 +209,9 @@ parseRSEM <- function(path, field = 'FPKM') {
         x <- x[, c('gene_id', field)]
         names(x) <- c('gene_id', name)
         x})
-    gcm <- Reduce(function(x,y) merge(x, y, by = 'gene_id'), quant)
+    gcm <- do.call(cbind.data.frame, fpkm)
     rownames(gcm) <- gcm$gene_id
-    gcm <- gcm[,-1]
+    gcm <- gcm[, -grep('gene_id', names(gcm))]
     gcm <- as.matrix(gcm)
     return(gcm)
 }
