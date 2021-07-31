@@ -171,6 +171,7 @@ ens2gene <- function(gcm, edb) {
     sym <- map$SYMBOL[match(gsub('\\..*', '', rownames(gcm)), map$GENEID)]
     geneSym <- paste0(rownames(gcm), '-', sym)
     rownames(gcm) <- geneSym
+    return(gcm)
 }
 
 #' Map FindAllMarkers output to a reference
