@@ -261,3 +261,82 @@ combPlot <- function(seu,
 
 }
 
+#' Compare conditions for each identity class
+#' @param seu Seurat Object
+#' @param condition (metadata column which contains levels of conditions
+#' @param xlsx.out.dir marker table dir
+#' @param xlsx.out.name marker table name
+#' @param plot.out.dir plot dir
+#' @param plot.name plot name
+#' @param plot.height plot height
+#' @param plot.width plot width 
+#' @param dotplot.cex dotplot axis text size
+#' @importFrom openxlsx write.xlsx
+#' @importFrom Seurat Idents FindAllMarkers DotPlot
+#' @importFrom data.table data.table
+#' @importFrom ggplot2 theme element_text scale_x_discrete ggtitle
+#' @importFrom gridExtra grid.arrange
+#' @return plots and table of markers
+#' @export
+condByIdent <- function(seu, 
+                        condition = 'SHAM.MI',
+                        xlsx.out.dir = 'out',
+                        xlsx.out.name = 'condition-by-ident',
+                        plot.out.dir = 'plots',
+                        plot.name = 'condition-by-ident',
+                        plot.height = 12,
+                        plot.width = 16,
+                        dotplot.cex = 10) {
+    
+    if (!(condition %in% names(seu@meta.data))) {
+        stop('Name a valid condition to split idents by. Should be in metadata')
+    }
+    
+    idents <- unique(Idents(seu))
+    out <- DOT <- vector('list', length = length(idents))
+    names(out) <- idents
+    
+    for (i in 1:length(idents)) {
+        
+        message(paste0('Finding markers for ', idents[i]))
+        seuCT <- subset(seu, idents = idents[i])
+        Idents(seuCT) <- seuCT@meta.data[[condition]]
+        
+        if (any(tabulate(Idents(seuCT)) < 2)) {
+            message(paste0('Skipping ', idents[i]))
+            next
+        }
+        
+        markersCT <- FindAllMarkers(seuCT)
+        markersCT <- data.table(markersCT)
+        markersCT$sym = ifelse(test = !grepl('NA', markersCT$gene), 
+                               yes = sub('.*?-', '', markersCT$gene), 
+                               no = sub('-.*', '', markersCT$gene))
+        out[[i]] <- markersCT
+        p_val_adj <- NULL
+        markersCT <- markersCT[p_val_adj < 0.5]
+        
+        if (nrow(markersCT) > 1) {
+            message(paste0('Generating plot for ', idents[i]))
+            DOT[[i]] <- DotPlot(seuCT, 
+                                features = unique(markersCT$gene), 
+                                cols = 'RdBu') + 
+                theme(axis.text.x = element_text(angle = 45, 
+                                                 size = dotplot.cex, 
+                                                 vjust = 0.8, hjust = 0.8)) +
+                scale_x_discrete(labels = markersCT$sym) +
+                ggtitle(idents[i])
+        }
+    }
+    
+    keep <- unlist(lapply(DOT, is.null))
+    pdf(paste0(plot.out.dir, "/", plot.name, ".pdf"), 
+        height = plot.height, width = plot.width)
+    do.call(grid.arrange, DOT[!keep])
+    dev.off()
+    
+    xlsx.out <- paste0(xlsx.out.dir, '/', xlsx.out.name, '.xlsx')
+    write.xlsx(out, file = xlsx.out)
+    
+}
+

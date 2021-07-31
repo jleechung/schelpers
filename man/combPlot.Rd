@@ -8,6 +8,7 @@ combPlot(
   seu,
   features,
   out.dir = "plots",
+  plot.name = "combined",
   umap.pt = 2,
   tsne.pt = 2,
   dotplot.cex = 10,
@@ -21,6 +22,8 @@ combPlot(
 \item{features}{FindAllMarkers output}
 
 \item{out.dir}{out directory}
+
+\item{plot.name}{file name for plot}
 
 \item{umap.pt}{umap point size}
 
