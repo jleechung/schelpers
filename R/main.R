@@ -142,11 +142,11 @@ ExploreClusterResolutions <- function(seu,
         dev.off()
     }
     
-    pdf(out.dir, '/umaps.pdf', height = umap.height, width = umap.width)
+    pdf(paste0(out.dir, '/umaps.pdf'), height = umap.height, width = umap.width)
     do.call('grid.arrange', UMAPS)
     dev.off()
     
-    pdf(out.dir, '/tsnes.pdf', height = tsne.height, width = tsne.width)
+    pdf(paste0(out.dir, '/tsnes.pdf'), height = tsne.height, width = tsne.width)
     do.call('grid.arrange', TSNES)
     dev.off()
     
