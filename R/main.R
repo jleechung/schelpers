@@ -221,6 +221,7 @@ parseRSEM <- function(path, field = 'FPKM') {
 #' @param seu Seurat object
 #' @param features FindAllMarkers output
 #' @param out.dir out directory
+#' @param plot.name file name for plot
 #' @param umap.pt umap point size
 #' @param tsne.pt tsne point size
 #' @param dotplot.cex dotplot axis test size
@@ -234,6 +235,7 @@ parseRSEM <- function(path, field = 'FPKM') {
 combPlot <- function(seu, 
                      features,
                      out.dir = 'plots',
+                     plot.name = 'combined',
                      umap.pt = 2,
                      tsne.pt = 2,
                      dotplot.cex = 10,
