@@ -20,3 +20,5 @@ Imports:
     gridExtra,
     ensembldb,
     openxlsx
+Depends: 
+    R (>= 2.10)
