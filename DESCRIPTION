@@ -18,5 +18,4 @@ Imports:
     dplyr,
     ggplot2,
     gridExtra,
-    ensembldb,
     openxlsx

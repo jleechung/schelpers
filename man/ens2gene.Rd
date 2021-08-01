@@ -4,12 +4,12 @@
 \alias{ens2gene}
 \title{Map ensembl IDs to gene names}
 \usage{
-ens2gene(gcm, edb)
+ens2gene(gcm, map)
 }
 \arguments{
 \item{gcm}{gene-cell matrix with rownames as genes}
 
-\item{edb}{ensembl database e.g. EnsDb.Mmusculus.v79}
+\item{map}{map with ensembl gene id, transcript id and gene name as columns}
 }
 \value{
 gcm with ensemblID-gene as rownames

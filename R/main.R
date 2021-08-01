@@ -160,17 +160,15 @@ ExploreClusterResolutions <- function(seu,
 
 #' Map ensembl IDs to gene names
 #' @param gcm gene-cell matrix with rownames as genes
-#' @param edb ensembl database e.g. EnsDb.Mmusculus.v79
-#' @importFrom ensembldb select
-#' @return  gcm with ensemblID-gene as rownames
+#' @param map map with ensembl gene id, transcript id and gene name as columns
+#' @return gcm with ensemblID-gene as rownames
 #' @export
-ens2gene <- function(gcm, edb) {
-    geneIds <- gsub('\\..*', '', rownames(gcm))
-    map <- ensembldb::select(edb, keys = geneIds, keytype = 'GENEID',
-                             columns = c('SYMBOL', 'GENEID'))
-    sym <- map$SYMBOL[match(gsub('\\..*', '', rownames(gcm)), map$GENEID)]
-    geneSym <- paste0(rownames(gcm), '-', sym)
-    rownames(gcm) <- geneSym
+ens2gene <- function(gcm, map) {
+    ens <- gsub('\\..*', '', rownames(gcm))
+    key <- gsub('\\..*', '', map$V1)
+    id <- match(ens, key)
+    val <- map$V3[id]
+    rownames(gcm) <- paste0(rownames(gcm), '-', val)
     return(gcm)
 }
 
