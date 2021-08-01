@@ -15,38 +15,72 @@ ulen <- function(x) {
     length(unique(x))
 }
 
-#' Kelly palette
+#' Kelly and Alphabet palette
 #' @param n number of colors
 #' @return colors
 #' @export
-kellyPal <- function(n=21) {
+scpalette <- function(n=45, alpha = 200) {
     
+    maxCV <- 255
     col <- c(
-        rgb(0, 0, 0, maxColorValue = 255, alpha = 200),
-        rgb(255, 179, 0, maxColorValue = 255, alpha = 200),
-        rgb(128, 62, 117, maxColorValue = 255, alpha = 200),
-        rgb(255, 104, 0, maxColorValue = 255, alpha = 200),
+    
+        ## Kelly palette
+        rgb(0, 0, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 179, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(128, 62, 117, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 104, 0, maxColorValue = maxCV, alpha = alpha),
         
-        rgb(166, 189, 215, maxColorValue = 255, alpha = 200),
-        rgb(193, 0, 32, maxColorValue = 255, alpha = 200),
-        rgb(206, 162, 98, maxColorValue = 255, alpha = 200),
-        rgb(0, 125, 52, maxColorValue = 255, alpha = 200),
+        rgb(166, 189, 215, maxColorValue = maxCV, alpha = alpha),
+        rgb(193, 0, 32, maxColorValue = maxCV, alpha = alpha),
+        rgb(206, 162, 98, maxColorValue = maxCV, alpha = alpha),
+        rgb(0, 125, 52, maxColorValue = maxCV, alpha = alpha),
         
-        rgb(246, 118, 142, maxColorValue = 255, alpha = 200),
-        rgb(0, 83, 138, maxColorValue = 255, alpha = 200),
-        rgb(129, 112, 102, maxColorValue = 255, alpha = 200),
-        rgb(179, 40, 81, maxColorValue = 255, alpha = 200),
+        rgb(246, 118, 142, maxColorValue = maxCV, alpha = alpha),
+        rgb(0, 83, 138, maxColorValue = maxCV, alpha = alpha),
+        rgb(129, 112, 102, maxColorValue = maxCV, alpha = alpha),
+        rgb(179, 40, 81, maxColorValue = maxCV, alpha = alpha),
         
-        rgb(255, 122, 92, maxColorValue = 255, alpha = 200),
-        rgb(83, 55, 122, maxColorValue = 255, alpha = 200),
-        rgb(255, 142, 0, maxColorValue = 255, alpha = 200),
-        rgb(244, 200, 0, maxColorValue = 255, alpha = 200),
+        rgb(255, 122, 92, maxColorValue = maxCV, alpha = alpha),
+        rgb(83, 55, 122, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 142, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(244, 200, 0, maxColorValue = maxCV, alpha = alpha),
         
-        rgb(127, 24, 13, maxColorValue = 255, alpha = 200),
-        rgb(147, 170, 0, maxColorValue = 255, alpha = 200),
-        rgb(89, 51, 21, maxColorValue = 255, alpha = 200),
-        rgb(241, 58, 19, maxColorValue = 255, alpha = 200),
-        rgb(35, 44, 22, maxColorValue = 255, alpha = 200)
+        rgb(127, 24, 13, maxColorValue = maxCV, alpha = alpha),
+        rgb(147, 170, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(89, 51, 21, maxColorValue = maxCV, alpha = alpha),
+        rgb(241, 58, 19, maxColorValue = maxCV, alpha = alpha),
+        rgb(35, 44, 22, maxColorValue = maxCV, alpha = alpha),
+        
+        ## Alphabet palette
+        rgb(240, 163, 255, maxColorValue = maxCV, alpha = alpha),
+        rgb(0, 117, 220, maxColorValue = maxCV, alpha = alpha),
+        rgb(153, 63, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(76, 0, 92, maxColorValue = maxCV, alpha = alpha),
+
+        rgb(0, 92, 49, maxColorValue = maxCV, alpha = alpha),
+        rgb(43, 206, 72, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 204, 153, maxColorValue = maxCV, alpha = alpha),
+        rgb(148, 255, 181, maxColorValue = maxCV, alpha = alpha),
+        
+        rgb(143, 124, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(157, 204, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(194, 0, 136, maxColorValue = maxCV, alpha = alpha),
+        rgb(0, 51, 128, maxColorValue = maxCV, alpha = alpha),
+        
+        rgb(255, 164, 5, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 168, 187, maxColorValue = maxCV, alpha = alpha),
+        rgb(66, 102, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 0, 0, maxColorValue = maxCV, alpha = alpha),
+        
+        rgb(94, 241, 242, maxColorValue = maxCV, alpha = alpha),
+        rgb(0, 153, 143, maxColorValue = maxCV, alpha = alpha),
+        rgb(224, 255, 102, maxColorValue = maxCV, alpha = alpha),
+        rgb(116, 10, 255, maxColorValue = maxCV, alpha = alpha),
+        
+        rgb(153, 0, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 255, 128, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 225, 0, maxColorValue = maxCV, alpha = alpha),
+        rgb(255, 80, 5, maxColorValue = maxCV, alpha = alpha)
         
     )
     
@@ -109,9 +143,9 @@ ExploreClusterResolutions <- function(seu,
         Idents(seu) <- currClust
         
         ## Dimplots
-        umap <- DimPlot(seu, reduction = 'umap', cols = kellyPal(), pt.size = umap.pt) +
+        umap <- DimPlot(seu, reduction = 'umap', cols = scpalette(), pt.size = umap.pt) +
             ggtitle(clustNames[i])
-        tsne <- DimPlot(seu, reduction = 'tsne', cols = kellyPal(), pt.size = tsne.pt) +
+        tsne <- DimPlot(seu, reduction = 'tsne', cols = scpalette(), pt.size = tsne.pt) +
             ggtitle(clustNames[i])
         
         UMAPS[[i]] <- umap
@@ -243,9 +277,9 @@ combPlot <- function(seu,
     pdf(paste0(out.dir, '/', plot.name, '.pdf'), 
         height = comb.height, width = comb.width)
     
-    umap <- DimPlot(seu, reduction = 'umap', cols = kellyPal(), 
+    umap <- DimPlot(seu, reduction = 'umap', cols = scpalette(), 
                     label = TRUE, repel = TRUE, pt.size = umap.pt)
-    tsne <- DimPlot(seu, reduction = 'tsne', cols = kellyPal(), 
+    tsne <- DimPlot(seu, reduction = 'tsne', cols = scpalette(), 
                     label = TRUE, repel = TRUE, pt.size = tsne.pt) 
     dot <- DotPlot(seu, features = unique(features$gene), cols = 'RdBu', 
                    cluster.idents = T) + 
