@@ -55,16 +55,13 @@ if [[ ! -e "$input" ]]
 then
 	echo "Error: ${input} does not exist..."
 	exit 1
-fi
-
-if [[ $input != *gtf.gz ]] && [[ $input != *.gtf ]]
+elif [[ $input != *gtf.gz ]] && [[ $input != *.gtf ]]
 then
 	echo "Error: ${input} does not seem to be a gtf file..."
-	exit 1
+	exit 1 
 fi
 
 ## Parse input
-
 echo "[$(tlog)] Parsing ${input}..."
 
 if [[ $input == *gz ]]
@@ -79,5 +76,3 @@ fi
 echo "[$(tlog)] Writing results to ${output}..."
 
 exit 0
-
-
