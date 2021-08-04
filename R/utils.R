@@ -168,8 +168,8 @@ parseSTARlog <- function(path) {
         x
     })
     message('Merging ')
-    stat <- do.call(cbind.data.frame, stat)
-    fields <- stat[,1]
+    out <- do.call(cbind.data.frame, stat)
+    fields <- out[,1]
     out <- data.frame(out[,-grep('Stat', colnames(out))])
     rownames(out) <- fields
     return(out)
