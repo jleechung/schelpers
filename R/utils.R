@@ -157,7 +157,7 @@ parseRSEM <- function(path, field = "FPKM") {
 parseSTARlog <- function(path) {
     files <- list.files(path, full.names = TRUE)
     message('Parsing files')
-    quant <- lapply(files, function(x) {
+    stat <- lapply(files, function(x) {
         name <- gsub(".*/|.Log.final.out", "", x)
         x <- fread(x, sep = '\t', fill = TRUE, 
                    header = FALSE, blank.lines.skip = TRUE)
