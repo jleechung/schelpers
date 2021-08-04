@@ -1,93 +1,8 @@
+# ExploreClusterResolutions 
+# CombinedPlot
+# CondByIdent
+# FindMarkersBaseline
 
-#' Peak into objects
-#' @param x a data.frame or matrix
-#' @return preview
-#' @export
-see <- function(x) {
-    x[1:5,1:5]
-}
-
-#' Unique length
-#' @param x a vector
-#' @return unique length
-#' @export
-ulen <- function(x) {
-    length(unique(x))
-}
-
-#' Kelly and Alphabet palette
-#' @param n number of colors
-#' @return colors
-#' @export
-scpalette <- function(n=45, alpha = 200) {
-    
-    maxCV <- 255
-    col <- c(
-    
-        ## Kelly palette
-        rgb(0, 0, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 179, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(128, 62, 117, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 104, 0, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(166, 189, 215, maxColorValue = maxCV, alpha = alpha),
-        rgb(193, 0, 32, maxColorValue = maxCV, alpha = alpha),
-        rgb(206, 162, 98, maxColorValue = maxCV, alpha = alpha),
-        rgb(0, 125, 52, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(246, 118, 142, maxColorValue = maxCV, alpha = alpha),
-        rgb(0, 83, 138, maxColorValue = maxCV, alpha = alpha),
-        rgb(129, 112, 102, maxColorValue = maxCV, alpha = alpha),
-        rgb(179, 40, 81, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(255, 122, 92, maxColorValue = maxCV, alpha = alpha),
-        rgb(83, 55, 122, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 142, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(244, 200, 0, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(127, 24, 13, maxColorValue = maxCV, alpha = alpha),
-        rgb(147, 170, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(89, 51, 21, maxColorValue = maxCV, alpha = alpha),
-        rgb(241, 58, 19, maxColorValue = maxCV, alpha = alpha),
-        rgb(35, 44, 22, maxColorValue = maxCV, alpha = alpha),
-        
-        ## Alphabet palette
-        rgb(240, 163, 255, maxColorValue = maxCV, alpha = alpha),
-        rgb(0, 117, 220, maxColorValue = maxCV, alpha = alpha),
-        rgb(153, 63, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(76, 0, 92, maxColorValue = maxCV, alpha = alpha),
-
-        rgb(0, 92, 49, maxColorValue = maxCV, alpha = alpha),
-        rgb(43, 206, 72, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 204, 153, maxColorValue = maxCV, alpha = alpha),
-        rgb(148, 255, 181, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(143, 124, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(157, 204, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(194, 0, 136, maxColorValue = maxCV, alpha = alpha),
-        rgb(0, 51, 128, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(255, 164, 5, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 168, 187, maxColorValue = maxCV, alpha = alpha),
-        rgb(66, 102, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 0, 0, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(94, 241, 242, maxColorValue = maxCV, alpha = alpha),
-        rgb(0, 153, 143, maxColorValue = maxCV, alpha = alpha),
-        rgb(224, 255, 102, maxColorValue = maxCV, alpha = alpha),
-        rgb(116, 10, 255, maxColorValue = maxCV, alpha = alpha),
-        
-        rgb(153, 0, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 255, 128, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 225, 0, maxColorValue = maxCV, alpha = alpha),
-        rgb(255, 80, 5, maxColorValue = maxCV, alpha = alpha)
-        
-    )
-    
-    if (n > length(col)) stop('Not enough colors.')
-    
-    return(col[seq_len(n)])
-}
 
 #' Visualise clustering parameters
 #' @param seu seurat object
@@ -189,65 +104,9 @@ ExploreClusterResolutions <- function(seu,
     names(MARKERS) <- clustNames
     
     return(list(umaps = UMAPS, tsnes = TSNES, markers = MARKERS))
- 
-}
-
-#' Map ensembl IDs to gene names
-#' @param gcm gene-cell matrix with rownames as genes
-#' @param map map with ensembl gene id, transcript id and gene name as columns
-#' @return gcm with ensemblID-gene as rownames
-#' @export
-ens2gene <- function(gcm, map) {
-    ens <- gsub('\\..*', '', rownames(gcm))
-    key <- gsub('\\..*', '', map$V1)
-    id <- match(ens, key)
-    val <- map$V3[id]
-    rownames(gcm) <- paste0(rownames(gcm), '-', val)
-    return(gcm)
-}
-
-#' Map FindAllMarkers output to a reference
-#' @param features FindAllMarkers output
-#' @param ref reference panel 
-#' @importFrom dplyr as_tibble filter `%>%`
-#' @return list of major cell class and tabulated hits
-#' @export
-returnHits <- function(features, ref) {
     
-    upgenes <- features %>% dplyr::filter(avg_log2FC > 0)
-    if (length(upgenes) == 0) {
-        stop('No upregulated genes.')
-    } else {
-        markers <- upgenes$sym
-        refHit <- as_tibble(ref) %>% dplyr::filter(Gene %in% markers, 
-                                                   Log2FoldChange > 0)
-        hitTab <- table(refHit$Ident)
-        hitName <- names(which.max(hitTab))
-    }
-    
-    return(list(MajorCT = hitName, AllHits = hitTab))
 }
 
-#' Parse RSEM genes.results to a GCM
-#' @param path path of directory
-#' @param field field (FPKM / TPM)
-#' @return gcm
-#' @export
-parseRSEM <- function(path, field = 'FPKM') {
-    files <- list.files(path, full.names = TRUE)
-    quant <- lapply(files, function(x) {
-        name <- gsub('.*/|.genes.results', '', x)
-        message(name)
-        x <- read.delim(x)
-        x <- x[, c('gene_id', field)]
-        names(x) <- c('gene_id', name)
-        x})
-    gcm <- do.call(cbind.data.frame, quant)
-    rownames(gcm) <- gcm$gene_id
-    gcm <- gcm[, -grep('gene_id', names(gcm))]
-    gcm <- as.matrix(gcm)
-    return(gcm)
-}
 
 #' Combined plots
 #' @param seu Seurat object
@@ -264,16 +123,16 @@ parseRSEM <- function(path, field = 'FPKM') {
 #' @importFrom gridExtra grid.arrange
 #' @return plots in out.dir
 #' @export
-combPlot <- function(seu, 
-                     features,
-                     out.dir = 'plots',
-                     plot.name = 'combined',
-                     umap.pt = 2,
-                     tsne.pt = 2,
-                     dotplot.cex = 10,
-                     comb.height = 16, 
-                     comb.width = 20) {
-
+CombinedPlot <- function(seu, 
+                         features,
+                         out.dir = 'plots',
+                         plot.name = 'combined',
+                         umap.pt = 2,
+                         tsne.pt = 2,
+                         dotplot.cex = 10,
+                         comb.height = 16, 
+                         comb.width = 20) {
+    
     pdf(paste0(out.dir, '/', plot.name, '.pdf'), 
         height = comb.height, width = comb.width)
     
@@ -290,7 +149,7 @@ combPlot <- function(seu,
                     c(3,3))
     grid.arrange(umap, tsne, dot, layout_matrix = layout)
     dev.off()
-
+    
 }
 
 #' Compare conditions for each identity class
@@ -310,7 +169,7 @@ combPlot <- function(seu,
 #' @importFrom gridExtra grid.arrange
 #' @return plots and table of markers
 #' @export
-condByIdent <- function(seu, 
+CondByIdent <- function(seu, 
                         condition = 'SHAM.MI',
                         xlsx.out.dir = 'out',
                         xlsx.out.name = 'condition-by-ident',
@@ -370,5 +229,67 @@ condByIdent <- function(seu,
     xlsx.out <- paste0(xlsx.out.dir, '/', xlsx.out.name, '.xlsx')
     write.xlsx(out, file = xlsx.out)
     
+    names(out) <- names(DOT) <- paste0('cluster ', idents)
+    return(list(markers = out, plots = DOT))
 }
 
+
+#' Find Markers for all clusters against a baseline cluster
+#' @param seu Seurat object
+#' @param baseline cluster to compare all clusters against
+#' @param only.pos return up-regulated markers against the baseline only
+#' @param n.markers number of markers to draw in boxplot
+#' @param dotplot.cex dotplot axis text size
+#' @importFrom data.table data.table
+#' @importFrom Seurat DotPlot FindMarkers
+#' @importFrom ggplot2 theme element_text scale_x_discrete
+#' @return plots and table of markers
+#' @export
+FindMarkersBaseline <- function(seu, baseline, only.pos = TRUE, 
+                                n.markers = 30, dotplot.cex = 10) {
+    
+    if (!(baseline %in% Idents(seu))) stop('Specify a valid baseline 
+                                           cluster to compare to')
+    
+    others <- setdiff(as.numeric(unique(Idents(seu))), baseline)
+    others <- sort(others)
+    OUT <- DOT <- vector('list', length = length(others))
+    
+    for (i in 1:length(others)) {
+        
+        message(paste0('Processing cluster ', others[i]))
+        markers <- FindMarkers(seu, ident.1 = others[i], ident.2 = baseline)
+        
+        if (nrow(markers) == 0) next 
+        
+        features <- data.table(markers, keep.rownames = 'gene')
+        features <- features[p_val_adj < 0.05]
+        features <- features[order(avg_log2FC, decreasing = TRUE)]
+        features$sym <- ifelse(test = !grepl("NA", features$gene), 
+                               yes = sub(".*?-", "", features$gene), 
+                               no = sub("-.*", "", features$gene))
+        
+        if (only.pos) features <- features[avg_log2FC > 0]
+        
+        OUT[[i]] <- features
+        features <- features[1:min(n.markers, nrow(markers))]
+        
+        if (nrow(features) == 0) next
+        
+        message(paste0('Generating plot for cluster ', others[i]))
+        markerGenes <- unique(features$gene)
+        DOT[[i]] <- DotPlot(seu, 
+                            features = markerGenes, 
+                            idents = c(others[i], baseline),
+                            cols = "RdBu", cluster.idents = T) + 
+            theme(axis.text.x = element_text(angle = 45,  size = dotplot.cex, 
+                                             vjust = 0.8, hjust = 0.8)) + 
+            scale_x_discrete(labels = features$sym[match(features$gene, 
+                                                         markerGenes)])
+        
+    }
+    
+    
+    names(OUT) <- names(DOT) <- paste0('cluster ', others)
+    return(list(markers = OUT, plots = DOT))
+}
